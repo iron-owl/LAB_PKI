@@ -92,9 +92,14 @@ root@96520cbdbfc0:~/ca# cat serial
 ### Генерация ключа
 
 ```bash
-openssl genrsa -aes256 -out private/ca.key.pem 4096
+root@7003d8c94d54:~/ca# openssl genrsa -aes256 -out private/ca.key.pem 4096
 chmod 400 private/ca.key.pem
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
 ```
+
+В качестве pass phrase можно использовать произвольную последовательность, например, `123123`.
+
 ### Генерация корневого сертификата
 
 Генерация сертификата:
@@ -120,7 +125,6 @@ Common Name [LAB Root CA]:LAB Root CA
 Email Address [rootca@lab.local]:rootca@lab.local
 root@96520cbdbfc0:~/ca#
 ```
-В качестве pass phrase можно использовать произвольную последовательность, например, `123123`.
 
 Просмотр сертификата:
 ```bash
