@@ -619,4 +619,163 @@ Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
 root@cafc7c90d92f:~/intermediate# cp crl/intermediate.crl.pem /root/share/
 ```
 
+Просмотр CRL:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl crl -in crl/intermediate.crl.pem -noout -text
+Certificate Revocation List (CRL):
+        Version 2 (0x1)
+        Signature Algorithm: sha256WithRSAEncryption
+        Issuer: C = RU, ST = Moscow, O = LAB, OU = LAB Intermediate CA, CN = LAB Intermediate CA, emailAddress = subca@lab.local
+        Last Update: Oct 16 15:43:30 2025 GMT
+        Next Update: Nov 15 15:43:30 2025 GMT
+        CRL extensions:
+            X509v3 Authority Key Identifier:
+                D6:18:AC:04:67:30:7C:EE:A3:41:47:E6:AA:1A:66:36:00:27:FB:D7
+            X509v3 CRL Number:
+                4097
+No Revoked Certificates.
+    Signature Algorithm: sha256WithRSAEncryption
+    Signature Value:
+        66:5e:1f:1d:43:36:4e:42:72:50:33:3f:e3:fe:db:ff:60:53:
+        e0:e4:f0:d7:b8:3c:5d:41:5f:fd:db:cc:24:33:6d:95:cc:4b:
+        ed:9a:79:39:ec:1a:db:87:a2:06:86:08:53:fe:03:62:62:43:
+        0d:e1:5c:b9:da:22:df:d6:93:79:ac:4c:df:af:6c:af:67:c0:
+        a2:05:a3:2c:15:5d:e9:16:d5:7a:0b:13:93:e8:88:59:87:77:
+        52:4b:2d:cd:70:00:92:5a:21:fe:87:74:93:af:4b:01:9e:b7:
+        fa:11:c9:01:7a:10:3a:8f:db:88:2b:1c:31:c1:91:5d:7a:4a:
+        22:4a:f7:eb:7d:eb:66:c3:e1:2d:4e:b4:c0:6a:80:02:05:35:
+        77:67:b7:ff:d1:ac:77:bf:62:4d:e1:0a:e1:37:f8:fa:9f:a5:
+        b0:32:62:d4:58:5e:8e:7f:17:4e:cf:6f:ae:e2:66:a2:45:fa:
+        cf:02:06:15:7a:a4:bb:82:92:de:07:33:1e:7d:6b:c7:48:66:
+        57:9e:65:30:6f:ba:2b:58:48:c1:5b:94:dd:f6:93:8b:e2:48:
+        62:1c:e1:25:94:a8:9c:1c:86:94:31:94:e2:77:94:a9:3e:12:
+        6d:41:28:14:a8:68:68:a6:8e:76:bc:3b:82:2a:9c:b5:42:f3:
+        a9:91:50:58:80:85:77:4a:dd:d6:28:34:18:73:15:7b:f3:b0:
+        70:44:64:e0:6c:f9:ee:9d:32:8e:75:86:1f:6a:0e:52:df:a8:
+        7c:5f:f1:d0:ef:34:99:1a:5c:fc:2d:d0:28:69:d6:fc:db:75:
+        63:60:a9:ea:81:89:ea:63:ba:cb:0f:b0:06:71:9d:5f:43:94:
+        4a:48:ca:bb:b3:28:cb:c8:bb:fa:09:5d:89:b0:4d:32:53:7f:
+        64:e5:95:83:68:bf:fa:d6:a3:86:a5:13:97:f6:19:65:e5:31:
+        83:c1:64:a3:22:e0:d2:2e:41:d7:09:fd:59:31:0e:bc:87:71:
+        05:c4:c2:5d:70:1c:d3:58:2f:87:50:27:f5:e3:9d:61:73:5d:
+        55:f2:74:6a:c2:a5:a7:39:a7:43:8f:0c:22:c7:a2:e7:f6:9d:
+        8c:7f:c6:ac:84:9f:26:83:ae:c6:76:8c:3b:5f:89:26:b7:ba:
+        8b:72:f2:58:56:a9:2c:12:ad:fe:b2:c5:86:0a:48:ef:b3:cb:
+        42:3b:b9:84:06:0a:43:94:60:15:0e:96:b8:f5:84:e3:85:e9:
+        4a:c9:98:17:0f:a3:59:f7:d1:3e:76:98:4c:46:0f:da:ac:e3:
+        a0:80:1f:7d:73:f6:e1:08:6f:b9:0d:2e:60:7f:d9:dc:27:a1:
+        65:25:df:fd:a5:f8:ac:8b
+```
+
+Как видно, нет отозванных сертификатов (их и не должно быть). Выпустим ещё один сертификат, чтобы сразу его отозвать.
+
+Генерируем ключ:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl genrsa -aes256 \
+-out private/nginx2.lab.local.key.pem 2048
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+```
+
+Генерируем csr-запрос:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl req -config openssl.cnf \
+-key private/nginx2.lab.local.key.pem \
+-new -sha256 -out csr/nginx2.lab.local.csr.pem
+Enter pass phrase for private/nginx2.lab.local.key.pem:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [RU]:RU
+State or Province Name [Moscow]:Moscow
+Locality Name [Moscow]:Moscow
+Organization Name [LAB]:LAB
+Organizational Unit Name [LAB Intermediate CA]:LAB
+Common Name [LAB Intermediate CA]:nginx2.lab.local
+Email Address [subca@lab.local]:nginx2@lab.local
+```
+
+Выпускаем сертификат:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf -extensions server_cert -days 375 -notext -md sha256 -in csr/nginx2.lab.local.csr.pem -out certs/nginx2.lab.local.cert.pem
+Using configuration from openssl.cnf
+Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4097 (0x1001)
+        Validity
+            Not Before: Oct 16 15:48:20 2025 GMT
+            Not After : Oct 26 15:48:20 2026 GMT
+        Subject:
+            countryName               = RU
+            stateOrProvinceName       = Moscow
+            localityName              = Moscow
+            organizationName          = LAB
+            organizationalUnitName    = LAB
+            commonName                = nginx2.lab.local
+            emailAddress              = nginx2@lab.local
+        X509v3 extensions:
+            X509v3 Basic Constraints:
+                CA:FALSE
+            Netscape Cert Type:
+                SSL Server
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage:
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier:
+                C6:F9:4F:A0:4D:7B:6A:E0:5A:BC:AA:18:D2:28:49:4B:AE:B1:33:B9
+            X509v3 Authority Key Identifier:
+                D6:18:AC:04:67:30:7C:EE:A3:41:47:E6:AA:1A:66:36:00:27:FB:D7
+            X509v3 Subject Alternative Name:
+                DNS:localhost, DNS:www.lab.local, IP Address:127.0.0.1
+            X509v3 CRL Distribution Points:
+                Full Name:
+                  URI:http://ocsp:8080/intermediate.crl.pem
+            Authority Information Access:
+                OCSP - URI:http://ocsp:2560
+Certificate is to be certified until Oct 26 15:48:20 2026 GMT (375 days)
+Sign the certificate? [y/n]:y
+
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Database updated
+```
+
+Отзываем сертификат:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf \
+-revoke certs/nginx2.lab.local.cert.pem
+Using configuration from openssl.cnf
+Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
+Revoking Certificate 1001.
+Database updated
+```
+
+Снова генерируем crl:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf -gencrl -out crl/intermediate.crl.pem
+Using configuration from openssl.cnf
+Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
+root@cafc7c90d92f:~/intermediate# cp crl/intermediate.crl.pem /root/share/
+```
+
+Проверим crl повторно:
+```bash
+root@cafc7c90d92f:~/intermediate# openssl crl -in crl/intermediate.crl.pem -noout -text | grep -A3 "Revoked Certificates"
+Revoked Certificates:
+    Serial Number: 1001
+        Revocation Date: Oct 16 15:49:36 2025 GMT
+    Signature Algorithm: sha256WithRSAEncryption
+```
+
+
+
+
 
