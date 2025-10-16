@@ -472,3 +472,89 @@ root@ac71a74e5eff:~/ca# cat /root/share/intermediate.cert.pem \
 root@ac71a74e5eff:~/ca# chmod 444 /root/share/ca-chain.cert.pem
 ```
 
+Генерация ключа:
+```bash
+root@aa912f47dfef:~/intermediate# cd /root/intermediate
+openssl genrsa -aes256 \
+-out private/nginx.lab.local.key.pem 2048
+chmod 400 private/nginx.lab.local.key.pem
+Enter PEM pass phrase:
+Verifying - Enter PEM pass phrase:
+```
+
+Генерация CSR-запроса:
+```bash
+root@aa912f47dfef:~/intermediate# openssl req -config openssl.cnf \
+-key private/nginx.lab.local.key.pem \
+-new -sha256 -out csr/nginx.lab.local.csr.pem
+Enter pass phrase for private/nginx.lab.local.key.pem:
+You are about to be asked to enter information that will be incorporated
+into your certificate request.
+What you are about to enter is what is called a Distinguished Name or a DN.
+There are quite a few fields but you can leave some blank
+For some fields there will be a default value,
+If you enter '.', the field will be left blank.
+-----
+Country Name (2 letter code) [RU]:RU
+State or Province Name [Moscow]:Moscow
+Locality Name [Moscow]:Moscow
+Organization Name [LAB]:LAB
+Organizational Unit Name [LAB Intermediate CA]:LAB
+Common Name [LAB Intermediate CA]:nginx.lab.local
+Email Address [subca@lab.local]:nginx@lab.local
+```
+
+Выпуск сертификата на сервер:
+```bash
+root@aa912f47dfef:~/intermediate# openssl ca -config openssl.cnf -extensions server_cert -days 375 -notext -md sha256 -in csr/nginx.lab.local.csr.pem -out certs/nginx.lab.local.cert.pem
+Using configuration from openssl.cnf
+Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
+Check that the request matches the signature
+Signature ok
+Certificate Details:
+        Serial Number: 4096 (0x1000)
+        Validity
+            Not Before: Oct 16 11:21:15 2025 GMT
+            Not After : Oct 26 11:21:15 2026 GMT
+        Subject:
+            countryName               = RU
+            stateOrProvinceName       = Moscow
+            localityName              = Moscow
+            organizationName          = LAB
+            organizationalUnitName    = LAB
+            commonName                = nginx.lab.local
+            emailAddress              = nginx@lab.local
+        X509v3 extensions:
+            X509v3 Basic Constraints:
+                CA:FALSE
+            Netscape Cert Type:
+                SSL Server
+            X509v3 Key Usage: critical
+                Digital Signature, Key Encipherment
+            X509v3 Extended Key Usage:
+                TLS Web Server Authentication
+            X509v3 Subject Key Identifier:
+                91:C0:BB:F9:C0:5E:37:0F:7F:7A:69:9D:FF:D9:6F:63:C3:EE:47:98
+            X509v3 Authority Key Identifier:
+                D8:11:D9:1D:C7:A1:79:C9:4B:CA:74:2B:30:CF:58:39:A3:B1:5A:51
+            X509v3 Subject Alternative Name:
+                DNS:localhost, DNS:www.lab.local, IP Address:127.0.0.1
+            X509v3 CRL Distribution Points:
+                Full Name:
+                  URI:http://ocsp:8080/intermediate.crl.pem
+            Authority Information Access:
+                OCSP - URI:http://ocsp:2560
+Certificate is to be certified until Oct 26 11:21:15 2026 GMT (375 days)
+Sign the certificate? [y/n]:y
+
+
+1 out of 1 certificate requests certified, commit? [y/n]y
+Write out database with 1 new entries
+Database updated
+```
+
+Права:
+```bash
+chmod 444 certs/nginx.lab.local.cert.pem
+```
+
