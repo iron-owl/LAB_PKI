@@ -46,3 +46,6 @@ services:
       - "8443:8443"
     volumes:
       - nginx_share:/etc/ssl
+    depends_on:
+      - ocsp
+
