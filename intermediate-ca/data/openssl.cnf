@@ -1,0 +1,99 @@
+[ ca ]
+default_ca = CA_default
+
+[ CA_default ]
+dir               = /root/ca/intermediate
+certs             = $dir/certs
+crl_dir           = $dir/crl
+new_certs_dir     = $dir/newcerts
+database          = $dir/index.txt
+serial            = $dir/serial
+crlnumber         = $dir/crlnumber
+RANDFILE          = $dir/private/.rand
+
+private_key       = $dir/private/intermediate.key.pem
+certificate       = $dir/certs/intermediate.cert.pem
+crl               = $dir/crl/intermediate.crl.pem
+crl_extensions    = crl_ext
+default_crl_days  = 30
+
+default_md        = sha256
+name_opt          = ca_default
+cert_opt          = ca_default
+default_days      = 3650
+preserve          = no
+policy            = policy_loose
+
+[ policy_loose ]
+countryName             = optional
+stateOrProvinceName     = optional
+localityName            = optional
+organizationName        = optional
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+[ req ]
+default_bits        = 4096
+default_md          = sha256
+distinguished_name  = req_distinguished_name
+string_mask         = utf8only
+x509_extensions     = v3_intermediate_ca
+
+[ req_distinguished_name ]
+countryName                     = Country Name (2 letter code)
+stateOrProvinceName             = State or Province Name
+localityName                    = Locality Name
+organizationName                = Organization Name
+organizationalUnitName          = Organizational Unit Name
+commonName                      = Common Name
+emailAddress                    = Email Address
+
+countryName_default             = RU
+stateOrProvinceName_default     = Moscow
+localityName_default            = Moscow
+organizationName_default        = LAB
+organizationalUnitName_default  = LAB Intermediate CA
+commonName_default              = LAB Intermediate CA
+emailAddress_default            = subca@lab.local
+
+[ v3_intermediate_ca ]
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid:always,issuer
+basicConstraints = critical, CA:true, pathlen:0
+keyUsage = critical, digitalSignature, cRLSign, keyCertSign
+
+[ usr_cert ]
+basicConstraints = CA:FALSE
+nsCertType = client, email
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = clientAuth, emailProtection
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+crlDistributionPoints = URI:http://ocsp:8080/intermediate.crl.pem
+authorityInfoAccess = OCSP;URI:http://ocsp:2560
+
+[ server_cert ]
+basicConstraints = CA:FALSE
+nsCertType = server
+keyUsage = critical, digitalSignature, keyEncipherment
+extendedKeyUsage = serverAuth
+subjectKeyIdentifier = hash
+authorityKeyIdentifier = keyid,issuer
+subjectAltName = @alt_names
+crlDistributionPoints = URI:http://ocsp:8080/intermediate.crl.pem
+authorityInfoAccess = OCSP;URI:http://ocsp:2560
+
+[ alt_names ]
+DNS.1 = localhost
+DNS.2 = www.lab.local
+IP.1  = 127.0.0.1
+
+[ crl_ext ]
+authorityKeyIdentifier = keyid:always
+
+[ ocsp ]
+basicConstraints = CA:FALSE
+keyUsage = critical, digitalSignature
+extendedKeyUsage = OCSPSigning
+
