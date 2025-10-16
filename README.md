@@ -613,11 +613,10 @@ root@vm-ubnt:/opt/lab_pki# docker compose start nginx-server
 
 На Intermediate-CA:
 ```bash
-root@cafc7c90d92f:/home/student# cd /root/intermediate/
-root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf \
-  -gencrl -out /root/share/intermediate.crl.pem
+root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf -gencrl -out crl/intermediate.crl.pem
 Using configuration from openssl.cnf
 Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
+root@cafc7c90d92f:~/intermediate# cp crl/intermediate.crl.pem /root/share/
 ```
 
 
