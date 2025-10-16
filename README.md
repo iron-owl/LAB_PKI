@@ -558,12 +558,28 @@ Database updated
 chmod 444 certs/nginx.lab.local.cert.pem
 ```
 
-Копирование сертификата на nginx:
+Копирование сертификата и ключа на nginx:
 ```bash
+root@f587580a50bf:~/intermediate# mv /root/nginx_share/certs/nginx.lab.local.cert.pem /root/nginx_share/certs/nginx.lab.local.cert.pem_old_$(date +%F)
+root@f587580a50bf:~/intermediate# mv /root/nginx_share/private/nginx.lab.local.key.pem /root/nginx_share/private/nginx.lab.local.key.pem_old_$(date +%F)
 root@aa912f47dfef:~/nginx_share# cat /root/intermediate/certs/nginx.lab.local.cert.pem \
 /root/share/ca-chain.cert.pem > /root/nginx_share/certs/nginx.lab.local.cert.pem
 root@aa912f47dfef:~/nginx_share# chmod 444 /root/nginx_share/certs/nginx.lab.local.cert.pem
-
-root@aa912f47dfef:~/intermediate# mv private/nginx.lab.local.key.pem /root/nginx_share/private/
+root@aa912f47dfef:~/intermediate# cp private/nginx.lab.local.key.pem /root/nginx_share/private/
+root@aa912f47dfef:~/nginx_share# chmod 400 /root/nginx_share/private/nginx.lab.local.key.pem 
 ```
 
+Проверка:
+```bash
+openssl s_client -connect 127.0.0.1:8443
+```
+
+Необходимо убрать защиту pem-паролем для ключа:
+```bash
+root@f587580a50bf:~/intermediate# cd /root/nginx_share/private/
+root@f587580a50bf:~/nginx_share/private# openssl rsa -in nginx.lab.local.key.pem -out nginx.lab.local.key.nopass.pem
+mv nginx.lab.local.key.nopass.pem nginx.lab.local.key.pem
+chmod 400 nginx.lab.local.key.pem
+Enter pass phrase for nginx.lab.local.key.pem:
+writing RSA key
+```
