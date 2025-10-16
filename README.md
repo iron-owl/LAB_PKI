@@ -558,3 +558,12 @@ Database updated
 chmod 444 certs/nginx.lab.local.cert.pem
 ```
 
+Копирование сертификата на nginx:
+```bash
+root@aa912f47dfef:~/nginx_share# cat /root/intermediate/certs/nginx.lab.local.cert.pem \
+/root/share/ca-chain.cert.pem > /root/nginx_share/certs/nginx.lab.local.cert.pem
+root@aa912f47dfef:~/nginx_share# chmod 444 /root/nginx_share/certs/nginx.lab.local.cert.pem
+
+root@aa912f47dfef:~/intermediate# mv private/nginx.lab.local.key.pem /root/nginx_share/private/
+```
+
