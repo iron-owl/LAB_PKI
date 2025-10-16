@@ -583,3 +583,12 @@ chmod 400 nginx.lab.local.key.pem
 Enter pass phrase for nginx.lab.local.key.pem:
 writing RSA key
 ```
+## Конфигурация CRL
+
+На Intermediate-CA:
+```bash
+openssl ca -config openssl.cnf \
+  -gencrl -out /root/share/intermediate.crl.pem
+```
+
+
