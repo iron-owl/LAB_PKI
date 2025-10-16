@@ -92,6 +92,13 @@ root@96520cbdbfc0:~/ca# cat serial
 ### Генерация ключа
 
 ```bash
+openssl genrsa -aes256 -out private/ca.key.pem 4096
+chmod 400 private/ca.key.pem
+```
+### Генерация корневого сертификата
+
+Генерация сертификата:
+```bash
 root@96520cbdbfc0:~/ca# openssl req -config openssl.cnf \
 -key private/ca.key.pem \
 -new -x509 -days 7300 -sha256 -extensions v3_ca \
@@ -115,8 +122,7 @@ root@96520cbdbfc0:~/ca#
 ```
 В качестве pass phrase можно использовать произвольную последовательность, например, `123123`.
 
-### Генерация корневого сертификата
-
+Просмотр сертификата:
 ```bash
 root@96520cbdbfc0:~/ca# openssl x509 -noout -text -in certs/ca.cert.pem
 Certificate:
