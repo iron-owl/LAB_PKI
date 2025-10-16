@@ -598,12 +598,26 @@ chmod 400 nginx.lab.local.key.pem
 Enter pass phrase for nginx.lab.local.key.pem:
 writing RSA key
 ```
+
+Перезапустить только контейнер nginx:
+```bash
+root@vm-ubnt:/opt/lab_pki# docker compose stop nginx-server
+[+] Stopping 1/1
+ ✔ Container lab_pki-nginx-server-1  Stopped                                                                                                                                                                  0.7s
+root@vm-ubnt:/opt/lab_pki# docker compose start nginx-server
+[+] Running 1/1
+ ✔ Container lab_pki-nginx-server-1  Started                                                                                                                                                                  1.6s
+```
+
 ## Конфигурация CRL
 
 На Intermediate-CA:
 ```bash
-openssl ca -config openssl.cnf \
+root@cafc7c90d92f:/home/student# cd /root/intermediate/
+root@cafc7c90d92f:~/intermediate# openssl ca -config openssl.cnf \
   -gencrl -out /root/share/intermediate.crl.pem
+Using configuration from openssl.cnf
+Enter pass phrase for /root/intermediate/private/intermediate.key.pem:
 ```
 
 
