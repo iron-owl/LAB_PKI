@@ -468,6 +468,11 @@ Certificate:
         89:c1:c4:3c:94:42:1e:04
 ```
 
+На Intermediate-CA:
+```bash
+root@cafc7c90d92f:~/intermediate# cp /root/share/intermediate.cert.pem /root/intermediate/certs/
+```
+
 Проверка 
 ```bash
 root@ac71a74e5eff:~/ca# openssl verify -CAfile /root/share/ca.cert.pem \
