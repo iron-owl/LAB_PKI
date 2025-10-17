@@ -32,6 +32,8 @@ services:
       - intermediate-ca
     ports:
       - "22002:22"
+      - "8081:8080"
+      - "2560:2560"
     volumes:
       - share:/root/share
 
