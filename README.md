@@ -2,39 +2,22 @@
 
 Лабораторная работа подготовлена на основе [статьи](https://jamielinux.com/docs/openssl-certificate-authority/index.html).
 
+Для удобства подготовки лабораторного стенда, все компоненты развёрнуты в контейнерах docker и управляются через docker compose.
+
+Работа проверена на Ubuntu 24.04. Для ускорения подготовки стенда рекомендуется развернуть в качестве рабочей станции для запуска лабораторного стенда виртуальную машину с Ubuntu 24.04 (с рабочим столом или без). 
+
+На рабочей станции вне зависимости от операционной системы [должен быть установлен docker и docker compose](https://docs.docker.com/engine/install/ubuntu/) для работы с контейнерами docker и необходим выход в интернет.
+
 # Подготовка и запуск стенда
 
-Выполнить сборку базового образа контейнера с Ubuntu:
+Необходимо клонировать репозиторий в рабочую директорию, например /opt:
 ```bash
-root@vm-ubnt:/opt/lab_pki# docker build -t base-ubuntu-ca ./base
-[+] Building 0.6s (11/11) FINISHED                                                                                                                                                                              docker:default
- => [internal] load build definition from Dockerfile                                                                                                                                                                      0.0s
- => => transferring dockerfile: 791B                                                                                                                                                                                      0.0s
- => [internal] load metadata for docker.io/library/ubuntu:24.04                                                                                                                                                           0.5s
- => [internal] load .dockerignore                                                                                                                                                                                         0.0s
- => => transferring context: 2B                                                                                                                                                                                           0.0s
- => [1/6] FROM docker.io/library/ubuntu:24.04@sha256:66460d557b25769b102175144d538d88219c077c678a49af4afca6fbfc1b5252                                                                                                     0.0s
- => [internal] load build context                                                                                                                                                                                         0.0s
- => => transferring context: 60B                                                                                                                                                                                          0.0s
- => CACHED [2/6] RUN apt-get update &&     apt-get install -y --no-install-recommends         openssh-server sudo vim curl net-tools ca-certificates &&     mkdir /var/run/sshd &&     rm -rf /var/lib/apt/lists/*        0.0s
- => CACHED [3/6] RUN useradd -m -s /bin/bash student &&     echo "student:student" | chpasswd &&     usermod -aG sudo student                                                                                             0.0s
- => CACHED [4/6] COPY sshd_config /etc/ssh/sshd_config                                                                                                                                                                    0.0s
- => CACHED [5/6] COPY init.sh /opt/init.sh                                                                                                                                                                                0.0s
- => CACHED [6/6] RUN chmod +x /opt/init.sh                                                                                                                                                                                0.0s
- => exporting to image                                                                                                                                                                                                    0.0s
- => => exporting layers                                                                                                                                                                                                   0.0s
- => => writing image sha256:b002cec8cb492b1352d3fdfee1d7f383bf1dbb56e2a001d2d2f41331d8b603bb                                                                                                                              0.0s
- => => naming to docker.io/library/base-ubuntu-ca                                                                                                                                                                         0.0s
+git clone https://github.com/iron-owl/LAB_PKI /opt/LAB_PKI
 ```
 
-Запустить контейнеры:
+Выполнить сборку и запуск контейнеров:
 ```bash
-root@vm-ubnt:/opt/lab_pki# docker compose up -d
-[+] Running 4/4
- ✔ Container lab_pki-root-ca-1          Started                                                                                                                                                                           0.5s
- ✔ Container lab_pki-intermediate-ca-1  Started                                                                                                                                                                           0.8s
- ✔ Container lab_pki-ocsp-1             Started                                                                                                                                                                           1.1s
- ✔ Container lab_pki-nginx-server-1     Started                                                                                                                                                                           1.5s
+docker compose up -d --- force-recreate --build
 ```
 
 Проверка работоспособности:
